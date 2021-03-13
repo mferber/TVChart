@@ -1,0 +1,16 @@
+{
+  "name": "tvchart",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "TV chart to print out",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@svgdotjs/svg.js": "^3.0.16",
+    "svgdom": "^0.1.8"
+  }
+}
