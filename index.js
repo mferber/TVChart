@@ -1,17 +1,19 @@
-import { createSVGWindow } from 'svgdom';
-import { SVG as SVGMaker, registerWindow } from '@svgdotjs/svg.js';
-import drawSVG from './drawSVG.js';
+import drawPDF from './drawPDF.js';
 import parseShows from './parse.js';
+import {} from './Alegreya-Regular-normal.js';
+import {} from './Alegreya-italic.js';
 
-const window = createSVGWindow();
-const document = window.document;
-registerWindow(window, document);
+const outfile = process.argv[2];
+if (!outfile) {
+    console.log("Usage: <cmd> <outfile>");
+    process.exit(1);
+}
 
-const svg = SVGMaker(document.documentElement);
-const shows = parseShows("./shows.csv")
+const shows = parseShows(new URL("shows.csv", import.meta.url))
     .then((shows) => {
-        drawSVG(svg, shows);
-        console.log(svg.svg());
+        const pdf = drawPDF(shows);
+        pdf.save(outfile);
     }).catch((error) => {
         console.error("Error:", error);
     });
+

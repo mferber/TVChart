@@ -1,23 +1,25 @@
 import { jsPDF } from "jspdf";
-import fs from "fs";
 
 const titleToBoxYSpace = 3;
 const rowYSpace = 2;
 const intershowSpace = 6;
+const showTitleInfoSpacing = 3;
 const boxHeight = 7;
 const boxWidth = 7; 
-const segmentHSpace = 10;
+const segmentHSpace = 8;
 const lineWidth = 0.2;
 const thickBorderWidth = 0.7;
 
 const fonts = {
     title: {
-        name: 'Alegreya-Medium',
-        size: 16
+        name: 'Alegreya-Regular',
+        size: 16,
+        style: 'normal'
     },
     annotation: {
-        name: 'Alegreya-Medium',
-        size: 12
+        name: 'Alegreya',
+        size: 12,
+        style: 'italic'
     }
 };
 const annotationFont = ['Alegreya-Medium', 12];
@@ -54,17 +56,8 @@ function sortByKey(array, key) {
 }
 
 function drawShow(pdf, show, y) {
-    const lineHeight = convertPointsToUnit(pdf.getFontSize(), 'mm');
     let yPrime = y;
-
-    pdf.saveGraphicsState()
-        .setFont(fonts.title.name)
-        .setFontSize(fonts.title.size);
-    const text = `${show.title} (${show.length}, ${show.location})`;
-    pdf.text(text, leftEdge, yPrime + lineHeight)
-        .restoreGraphicsState();
-    
-    yPrime += lineHeight + titleToBoxYSpace;
+    yPrime += drawShowInfo(pdf, show, yPrime) + titleToBoxYSpace;
     for (const seasonSegments of show.seasons) {
         let xPrime = leftEdge;
         for (let [idx, segmentLength] of seasonSegments.entries()) {
@@ -86,6 +79,26 @@ function drawShow(pdf, show, y) {
         yPrime += boxHeight + rowYSpace;
     }
     return yPrime;
+}
+
+function drawShowInfo(pdf, show, y) {
+    pdf.saveGraphicsState()
+        .setFont(fonts.title.name, fonts.title.style)
+        .setFontSize(fonts.title.size);
+
+    const lineHeight = convertPointsToUnit(pdf.getFontSize(), 'mm');
+    const descr = `(${show.length}, ${show.location})`;
+    
+    pdf.text(show.title, leftEdge, y + lineHeight);
+    
+    const offset = pdf.getTextWidth(show.title);
+
+    pdf.setFont(fonts.annotation.name, fonts.annotation.style)
+        .setFontSize(fonts.annotation.size);
+
+    pdf.text(descr, leftEdge + offset + showTitleInfoSpacing, y + lineHeight)
+        .restoreGraphicsState();
+    return lineHeight;
 }
 
 function appendPlus(pdf, xSpacerStart, yBoxTop) {
