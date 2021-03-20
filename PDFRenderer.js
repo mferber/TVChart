@@ -1,16 +1,20 @@
 import { jsPDF } from "jspdf";
 
-const titleToBoxYSpace = 3;
-const horizMargin = 20;
-const vertMargin = 20;
-const rowYSpace = 2;
-const intershowSpace = 6;
-const showTitleInfoSpacing = 3;
-const boxHeight = 7;
-const boxWidth = 7;
-const segmentHSpace = 8;
+const orientation = 'p';
+const pageSize = 'letter';
+const unit = 'mm';
+const boxHeight = 7; // all dimensions scale from this one
+
+const boxWidth = boxHeight;
+const titleToBoxYSpace = boxHeight * 0.5;
+const horizMargin = boxHeight * 3;
+const vertMargin = boxHeight * 3;
+const rowYSpace = boxHeight / 4;
+const intershowSpace = boxHeight;
+const showTitleInfoSpacing = boxHeight / 2;
+const segmentHSpace = boxHeight * 1.25;
 const lineWidth = 0.2;
-const thickBorderWidth = 0.7;
+const thickBorderWidth = boxHeight / 10;
 
 const fonts = {
     title: {
@@ -27,7 +31,8 @@ const fonts = {
 
 export default class PDFRenderer {
     #pdf;
-    #y;
+    #y = 0;
+    #pageHeightMm = 0;
 
     drawPDF(shows) {
         this._initializePDF();
@@ -38,6 +43,14 @@ export default class PDFRenderer {
 
         const sorted = this._sortByKey([...shows], 'title');
         for (const show of sorted) {
+            if (this.#y + this._measureShowY(show) > this.#pageHeightMm - 2 * vertMargin) {
+                this.#pdf.addPage({
+                    orientation: orientation,
+                    format: pageSize
+                });
+                this._initializePage();
+            }
+
             this._drawShow(show);
             this.#y += intershowSpace;
         }
@@ -46,14 +59,15 @@ export default class PDFRenderer {
 
     _initializePDF() {
         this.#pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'mm',
-            format: 'letter'
+            orientation: orientation,
+            unit: unit,
+            format: pageSize
         });
+        this.#pageHeightMm = this.#pdf.internal.pageSize.getHeight();
     }
     
     _initializePage() {
-        this.#y = horizMargin;
+        this.#y = vertMargin;
     }
 
     _sortByKey(array, key) {
@@ -66,9 +80,9 @@ export default class PDFRenderer {
     _drawShow(show) {
         this._drawShowInfo(show);
         this.#y += titleToBoxYSpace;
-        for (const seasonSegments of show.seasons) {
+        for (const [seasonIdx, seasonSegments] of show.seasons.entries()) {
             let x = horizMargin;
-            for (let [idx, segmentLength] of seasonSegments.entries()) {
+            for (let [segIdx, segmentLength] of seasonSegments.entries()) {
                 const segX = x;
                 for (let ep = 0; ep < segmentLength; ep++) {
                     this.#pdf.rect(x, this.#y, boxWidth, boxHeight);
@@ -80,11 +94,14 @@ export default class PDFRenderer {
                     .rect(segX, this.#y, boxWidth * segmentLength, boxHeight)
                     .restoreGraphicsState();
 
-                if (idx < seasonSegments.length - 1) {
+                if (segIdx < seasonSegments.length - 1) {
                     x = this._appendPlus(x);
                 }
             }
-            this.#y += boxHeight + rowYSpace;
+            this.#y += boxHeight;
+            if (seasonIdx < show.seasons.length - 1) {
+                this.#y += rowYSpace;
+            }
         }
     }
 
@@ -129,6 +146,11 @@ export default class PDFRenderer {
 
         this.#pdf.restoreGraphicsState();
         return xSpacerStart + segmentHSpace;
+    }
+
+    _measureShowY(show) {
+        return this._convertPointsToUnit(fonts.title.size, 'mm') + titleToBoxYSpace +
+            (show.seasons.length - 1) * boxHeight + rowYSpace;
     }
 
     // https://gist.github.com/AnalyzePlatypus/55d806caa739ba6c2b27ede752fa3c9c
