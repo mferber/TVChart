@@ -1,3 +1,5 @@
+// node index.js <outfile.pdf>
+//
 import PDFRenderer from './PDFRenderer.js';
 import parseShows from './parse.js';
 import {} from './Alegreya-Regular-normal.js';

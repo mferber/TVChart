@@ -80,12 +80,33 @@ export default class PDFRenderer {
     _drawShow(show) {
         this._drawShowInfo(show);
         this.#y += titleToBoxYSpace;
-        for (const [seasonIdx, seasonSegments] of show.seasons.entries()) {
+        let seasonCounter = 0;
+        for (const seasonSegments of show.seasons) {
+            ++seasonCounter;
+            let episodeCounter = 0;
             let x = horizMargin;
             for (let [segIdx, segmentLength] of seasonSegments.entries()) {
                 const segX = x;
                 for (let ep = 0; ep < segmentLength; ep++) {
+                    ++episodeCounter;
                     this.#pdf.rect(x, this.#y, boxWidth, boxHeight);
+
+                    if (show.seenThru) {
+                        if (seasonCounter < show.seenThru.season ||
+                            (seasonCounter === show.seenThru.season &&
+                                episodeCounter <= show.seenThru.episode))
+                        {
+                            // X's instead of shading the box:
+                            // this.#pdf.line(x, this.#y, x + boxWidth, this.#y + boxHeight);
+                            // this.#pdf.line(x, this.#y + boxHeight, x + boxWidth, this.#y);
+
+                            const origColor = this.#pdf.getFillColor();
+                            this.#pdf.setFillColor("0.8");
+                            this.#pdf.rect(x, this.#y, boxWidth, boxHeight, "F");
+                            this.#pdf.setFillColor(origColor);
+                        }
+                    }
+
                     x += boxWidth;
                 }
 
@@ -99,7 +120,7 @@ export default class PDFRenderer {
                 }
             }
             this.#y += boxHeight;
-            if (seasonIdx < show.seasons.length - 1) {
+            if (seasonCounter < show.seasons.length) {
                 this.#y += rowYSpace;
             }
         }

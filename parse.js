@@ -6,25 +6,36 @@ export default async function parseShows(path) {
 
     lines:
     for (const line of lines) {
+        let seenThru = null;
         const fields = line.split(',').map(f => f.trim());
+
         if (fields.length < 4) {
             notifyInvalid(line);
             continue lines;
         }
         let seasons = [];
         for (const season of fields.slice(3)) {
-            const segments = season.split('+').map(s => parseInt(s));
-            if (segments.some(s => isNaN(s))) {
-                notifyInvalid(line);
-                continue lines;
+            let seenThruMatch = /^S(\d+)(?:E(\d+))?$/.exec(season);
+            if (seenThruMatch) {
+                seenThru = {
+                    season: Number(seenThruMatch[1]),
+                    episode: Number(seenThruMatch[2]) || Number.MAX_VALUE
+                };
+            } else {
+                const segments = season.split('+').map(s => parseInt(s));
+                if (segments.some(s => isNaN(s))) {
+                    notifyInvalid(line);
+                    continue lines;
+                }
+                seasons.push(segments);
             }
-            seasons.push(segments);
         };
         shows.push({
             title: fields[0],
             location: fields[1],
             length: fields[2],
-            seasons: seasons
+            seasons: seasons,
+            seenThru: seenThru
         });
     }
 
