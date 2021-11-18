@@ -37,11 +37,12 @@ export default class PDFRenderer {
     drawPDF(shows) {
         this._initializePDF();
         this._initializePage();
+        shows.forEach((show) => show.sortableTitle = this._sortable(show.title));
 
         this.#pdf.setLineWidth(lineWidth)
             .setFontSize(10);
 
-        const sorted = this._sortByKey([...shows], 'title');
+        const sorted = this._sortByKey([...shows], 'sortableTitle');
         for (const show of sorted) {
             if (this.#y + this._measureShowY(show) > this.#pageHeightMm - 2 * vertMargin) {
                 this.#pdf.addPage({
@@ -68,6 +69,10 @@ export default class PDFRenderer {
     
     _initializePage() {
         this.#y = vertMargin;
+    }
+
+    _sortable(title) {
+        return title.replace(/^(a|the) /i, "");
     }
 
     _sortByKey(array, key) {
