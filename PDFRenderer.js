@@ -3,7 +3,7 @@ import { jsPDF } from "jspdf";
 const orientation = 'p';
 const pageSize = 'letter';
 const unit = 'mm';
-const boxHeight = 5.5; // all dimensions scale from this one
+const boxHeight = 5.2; // all dimensions scale from this one
 
 const boxWidth = boxHeight;
 const titleToBoxYSpace = boxHeight * 0.5;
