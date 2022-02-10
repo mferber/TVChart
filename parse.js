@@ -29,15 +29,19 @@ export default async function parseShows(path) {
         };
 
         let seenThru = null;
-        let seenThruMatch = /^S(\d+)(?:E(\d+))?$/.exec(fields[4]);
-        if (seenThruMatch) {
-            seenThru = {
-                season: Number(seenThruMatch[1]),
-                episode: Number(seenThruMatch[2]) || Number.MAX_VALUE
-            };
+        if (fields[4] === '0' || fields[4] === 'unstarted') {
+            seenThru = { season: 0, episode: 0 };
         } else {
-            notifyInvalid(line);
-            continue lines;
+            let seenThruMatch = /^S(\d+)(?:E(\d+))?$/.exec(fields[4]);
+            if (seenThruMatch) {
+                seenThru = {
+                    season: Number(seenThruMatch[1]),
+                    episode: Number(seenThruMatch[2]) || Number.MAX_VALUE
+                };
+            } else {
+                notifyInvalid(line);
+                continue lines;
+            }
         }
 
         shows.push({

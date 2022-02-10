@@ -3,22 +3,22 @@
 //
 // season-lengths: dot-delimited; for compound seasons, join segments with +
 // last-watched-episode: use S1E1 format; in compound seasons, count episodes
-//   from start of season
+//   from start of season. If unstarted, use '0', 'S0E0', or 'unstarted'.
 //
 // Example:
 // BoJack Horseman, Netflix, ½ hour, 12.12.12.12.12.8+8, S6E9
 
-Battlestar Galactica, DVD, 1 hour, 13.10+10.20+2.10+11, S2E9
-Better Call Saul, Netflix, 1 hour, 10.10.10.10.10.13, S3E3
-BoJack Horseman, Netflix, ½ hour, 12.12.12.12.12.8+8, S6E7
-Counterpart, Amazon Prime, 1 hour, 10.10, S1E1
-Dead to Me, Netflix, ½ hour, 10.10.10, S1
+All Creatures Great & Small, PBS, 1 hour, 6+1.6+1, S2E3
+Battlestar Galactica, DVD, 1 hour, 13.10+10.20+2.10+11, S2E17
+Better Call Saul, Netflix, 1 hour, 10.10.10.10.10.13, S3E9
+Better Off Ted, Hulu, ½ hour, 13.13, S1E8
+BoJack Horseman, Netflix, ½ hour, 12.12.12.12.12.8+8, S6E9
+// Counterpart, Amazon Prime, 1 hour, 10.10, S1E1
 For All Mankind, Apple TV+, 1 hour, 10.10.10, S2
-Foundation, Apple TV+, 1 hour, 10.10, S1E9
-Los Espookys, HBO, ½ hour, 6, S1E3
-Schmigadoon, Apple TV+, ½ hour, 6, S1E3
-Stranger Things, Netflix, 1 hour, 8.8.8, S3E1
-Superstore, Hulu, ½ hour, 11.22.22.22.21.15, S3E5
+Foundation, Apple TV+, 1 hour, 10.10, S1E10
+Station Eleven, HBO, 1 hour, 10, S1E5
+Superstore, Hulu, ½ hour, 11.22.22.22.21.15, S4E1
 Ted Lasso, Apple TV+, ½ hour, 10.12.12, S2
-The Leftovers, HBO, 1 hour, 10.10.8, S1E2
-The Mandalorian, Disney+, ½-1 hour, 8.8.8, S1E4
+The Leftovers, HBO, 1 hour, 10.10.8, S2E5
+The Mandalorian, Disney+, ½-1 hour, 8.8.8, S2E2
+Yellowjackets, Hulu+Showtime, 1 hour, 10, unstarted
